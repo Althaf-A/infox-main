@@ -22,12 +22,12 @@
                             <br>
                                 <tr>
                                     
-                                    
-                                    <td> {{i.month_fromdate}}04-04-2022</td>
-                                    <td>  {{i.month_todate}}04-04-2022</td>
-                                    <td> {{i.month_workingdays}}25</td>
-                                    <td>  {{i.month_holidays}}5</td>
-                                    
+                                    {% for i in mem %}
+                                    <td> {{i.month_fromdate}}</td>
+                                    <td>  {{i.month_todate}}</td>
+                                    <td> {{i.month_workingdays}}</td>
+                                    <td>  {{i.month_holidays}}</td>
+                                    {% endfor %}
                                 </tr>
                                 
                                 

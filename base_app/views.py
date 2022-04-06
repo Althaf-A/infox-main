@@ -8229,6 +8229,17 @@ def accounts_month_adddays_form(request):
         if request.session.has_key('usernameacnt2'):
             usernameacnt2 = request.session['usernameacnt2']
         z = user_registration.objects.filter(id=usernameacnt2)
+        mem=acnt_monthdays.objects.get()
+        if request.method == 'POST':
+            mem.month_fromdate = request.POST['fromdate']
+            mem.month_todate = request.POST['todate']
+            mem.month_workingdays = request.POST['workingdays']
+            mem.month_holidays = request.POST['holidays']
+              
+            mem.save()
+            msg_success='submitted succusfully'
+            return render(request,'accounts_month_adddays_form.html',{'z':z,'msg_success':msg_success})
+        
         return render(request,'accounts_month_adddays_form.html',{'z':z})
     else:
         return redirect('/')
@@ -8238,7 +8249,9 @@ def accounts_month_viewdays(request):
         if request.session.has_key('usernameacnt2'):
             usernameacnt2 = request.session['usernameacnt2']
         z = user_registration.objects.filter(id=usernameacnt2)
-        return render(request,'accounts_month_viewdays.html',{'z':z})
+        mem= acnt_monthdays.objects.all()
+        
+        return render(request,'accounts_month_viewdays.html',{'z':z,'mem':mem})
     else:
         return redirect('/')
 
@@ -8246,20 +8259,56 @@ def accounts_account_salary(request):
     if 'usernameacnt2' in request.session:
         if request.session.has_key('usernameacnt2'):
             usernameacnt2 = request.session['usernameacnt2']
-        z = user_registration.objects.filter(id=usernameacnt2)
-        return render(request,'accounts_account_salary.html',{'z':z})
+        z = user_registration.objects.filter(id=usernameacnt2)          
+        user=user_registration.objects.get(id=usernameacnt2)
+        acc=acntspayslip.objects.get(user_id=usernameacnt2)
+        return render(request,'accounts_account_salary.html', {'acc':acc ,'user':user,'z':z})
     else:
         return redirect('/')
         
-def accounts_accout_salary_slip(request):
-    if 'usernameacnt2' in request.session:
-        if request.session.has_key('usernameacnt2'):
-            usernameacnt2 = request.session['usernameacnt2']
-        z = user_registration.objects.filter(id=usernameacnt2)
-        return render(request,'accounts_accout_salary_slip.html',{'z':z})
-    else:
-        return redirect('/')
-        
+# def accounts_accout_salary_slip(request):
+#     if 'usernameacnt2' in request.session:
+#         if request.session.has_key('usernameacnt2'):
+#             usernameacnt2 = request.session['usernameacnt2']
+#         z = user_registration.objects.filter(id=usernameacnt2)
+#         return render(request,'accounts_accout_salary_slip.html',{'z':z})
+#     else:
+#         return redirect('/')
+def accounts_accout_salary_slip(request,id,tid):
+    date = datetime.now()  
+    user = user_registration.objects.get(id=tid)
+    acc = acntspayslip.objects.get(id=id)
+    print(acc)
+    year = date.today().year
+    month = date.today().month
+
+    leave = acnt_monthdays.objects.get(month_fromdate_year_gte=year,
+                                          month_fromdate_month_gte=month,
+                                          month_todate_year_lte=year,
+                                          month_todate_month_lte=month)
+    mm = leave.month_workingdays
+    print(mm)
+    abc = int(user.confirm_salary)
+    print(abc)
+    c = abc/mm
+    v = acc.leavesno
+    mem = mm-v
+    print(v)
+    conf = abc-c
+    template_path = 'acntpaypdf.html'
+    context = {'acc':acc, 'user':user,'c':c,'mm':mm,'mem':mem,'conf':conf,
+    'media_url':settings.MEDIA_URL,
+    'date':date,
+    }
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'filename="Payslip.pdf"'
+    template = get_template(template_path)
+    html = template.render(context)
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response       
         
     #************************Reset password*****************************
 def reset_password(request):

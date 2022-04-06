@@ -969,7 +969,7 @@ urlpatterns = [
     re_path(r'^accounts_month_adddays_form/$',views.accounts_month_adddays_form,name="accounts_month_adddays_form"),
     re_path(r'^accounts_month_viewdays/$',views.accounts_month_viewdays,name="accounts_month_viewdays"),
     re_path(r'^accounts_account_salary/$',views.accounts_account_salary,name="accounts_account_salary"),
-    re_path(r'^accounts_accout_salary_slip/$',views.accounts_accout_salary_slip,name="accounts_accout_salary_slip"),
+    re_path(r'^accounts_accout_salary_slip/(?P<id>\d+)/(?P<tid>\d+)/$',views.accounts_accout_salary_slip,name="accounts_accout_salary_slip"),
 
 
     
