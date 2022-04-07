@@ -68,20 +68,15 @@ class course(models.Model):
         return self.name
 
 class user_registration(models.Model):
-    designation = models.ForeignKey(designation, on_delete=models.SET_NULL,
-                                    related_name='userregistrationdesignation', null=True, blank=True)
-    department = models.ForeignKey(department, on_delete=models.SET_NULL,
-                                   related_name='userregistrationdepartment', null=True, blank=True)
-    branch = models.ForeignKey(branch_registration, on_delete=models.SET_NULL,
-                               related_name='userregistrationbranch', null=True, blank=True,default=1)
-    team = models.ForeignKey(create_team, on_delete=models.SET_NULL,
-                             related_name='userregistrationteam', null=True, blank=True)
+    designation = models.ForeignKey(designation, on_delete=models.SET_NULL,related_name='userregistrationdesignation', null=True, blank=True)
+    department = models.ForeignKey(department, on_delete=models.SET_NULL,related_name='userregistrationdepartment', null=True, blank=True)
+    branch = models.ForeignKey(branch_registration, on_delete=models.SET_NULL,related_name='userregistrationbranch', null=True, blank=True,default=1)
+    team = models.ForeignKey(create_team, on_delete=models.SET_NULL, related_name='userregistrationteam', null=True, blank=True)
     course = models.ForeignKey(course, on_delete=models.SET_NULL, related_name='course_name',null=True,blank=True)
     fullname = models.CharField(max_length=240, null=True)
     fathername = models.CharField(max_length=240, null=True)
     mothername = models.CharField(max_length=240, null=True)
-    dateofbirth = models.DateField(
-        auto_now_add=False, auto_now=False,  null=True, blank=True)
+    dateofbirth = models.DateField(auto_now_add=False, auto_now=False,  null=True, blank=True)
     gender = models.CharField(max_length=240, null=True)
     presentaddress1 = models.CharField(max_length=240, null=True)
     presentaddress2 = models.CharField(max_length=240, null=True)
@@ -107,12 +102,9 @@ class user_registration(models.Model):
     attitude = models.IntegerField(default='0')
     creativity = models.IntegerField(default='0')
     workperformance = models.IntegerField(default='0')
-    joiningdate = models.DateField(
-        auto_now_add=True, auto_now=False,  null=True, blank=True)
-    startdate = models.DateField(
-        auto_now_add=True, auto_now=False,  null=True, blank=True)
-    enddate = models.DateField(
-        auto_now_add=True, auto_now=False,  null=True, blank=True)
+    joiningdate = models.DateField(auto_now_add=True, auto_now=False,  null=True, blank=True)
+    startdate = models.DateField(auto_now_add=True, auto_now=False,  null=True, blank=True)
+    enddate = models.DateField(auto_now_add=True, auto_now=False,  null=True, blank=True)
     status = models.CharField(max_length=240, null=True, default="active")
     tl_id = models.IntegerField(default='0',null=True, blank=True)
     projectmanager_id = models.IntegerField(default='0',null=True, blank=True)
@@ -127,6 +119,8 @@ class user_registration(models.Model):
     relieveqr = models.CharField(max_length=500, default='',null=True,blank=True)
     expqr = models.CharField(max_length=500, default='',null=True,blank=True)
     hrmanager = models.CharField(max_length=500, default='',null=True,blank=True)
+    confirm_salary = models.CharField(max_length=255, default='')
+    confirm_salary_status = models.CharField(max_length=255, default='0')
  
     def __str__(self):
         return self.fullname

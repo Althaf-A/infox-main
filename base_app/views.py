@@ -1,4 +1,4 @@
-#import qrcode
+import qrcode
 import random
 import os
 # import psycopg2
@@ -32,7 +32,8 @@ from django.core.files.storage import FileSystemStorage
 
 from django.http import HttpResponse
 from django.template.loader import get_template
-#from xhtml2pdf import pisa
+from xhtml2pdf import pisa
+
 
 # Create your views here.
 def login(request):
@@ -8229,7 +8230,7 @@ def accounts_month_adddays_form(request):
         if request.session.has_key('usernameacnt2'):
             usernameacnt2 = request.session['usernameacnt2']
         z = user_registration.objects.filter(id=usernameacnt2)
-        mem=acnt_monthdays.objects.get()
+        mem=acnt_monthdays()
         if request.method == 'POST':
             mem.month_fromdate = request.POST['fromdate']
             mem.month_todate = request.POST['todate']
@@ -8261,31 +8262,22 @@ def accounts_account_salary(request):
             usernameacnt2 = request.session['usernameacnt2']
         z = user_registration.objects.filter(id=usernameacnt2)          
         user=user_registration.objects.get(id=usernameacnt2)
-        acc=acntspayslip.objects.get(user_id=usernameacnt2)
+        acc=acntspayslip.objects.filter(user_id=user)
+       #abc=acntspayslip.objects.get()
+
         return render(request,'accounts_account_salary.html', {'acc':acc ,'user':user,'z':z})
     else:
         return redirect('/')
         
-# def accounts_accout_salary_slip(request):
-#     if 'usernameacnt2' in request.session:
-#         if request.session.has_key('usernameacnt2'):
-#             usernameacnt2 = request.session['usernameacnt2']
-#         z = user_registration.objects.filter(id=usernameacnt2)
-#         return render(request,'accounts_accout_salary_slip.html',{'z':z})
-#     else:
-#         return redirect('/')
 def accounts_accout_salary_slip(request,id,tid):
     date = datetime.now()  
-    user = user_registration.objects.get(id=tid)
-    acc = acntspayslip.objects.get(id=id)
+    user = user_registration.objects.get(id=id)
+    acc = acntspayslip.objects.get(id=tid)
     print(acc)
     year = date.today().year
     month = date.today().month
 
-    leave = acnt_monthdays.objects.get(month_fromdate_year_gte=year,
-                                          month_fromdate_month_gte=month,
-                                          month_todate_year_lte=year,
-                                          month_todate_month_lte=month)
+    leave = acnt_monthdays.objects.get(month_fromdate__year__gte=year,month_fromdate__month__gte=month,month_todate__year__lte=year,month_todate__month__lte=month)
     mm = leave.month_workingdays
     print(mm)
     abc = int(user.confirm_salary)
@@ -8295,17 +8287,14 @@ def accounts_accout_salary_slip(request,id,tid):
     mem = mm-v
     print(v)
     conf = abc-c
-    template_path = 'acntpaypdf.html'
-    context = {'acc':acc, 'user':user,'c':c,'mm':mm,'mem':mem,'conf':conf,
-    'media_url':settings.MEDIA_URL,
-    'date':date,
+    template_path = 'accounts_accout_salary_slip.html'
+    context = {'acc':acc, 'user':user,'c':c,'mm':mm,'mem':mem,'conf':conf,'media_url':settings.MEDIA_URL,'date':date,
     }
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = 'filename="Payslip.pdf"'
     template = get_template(template_path)
     html = template.render(context)
-    pisa_status = pisa.CreatePDF(
-       html, dest=response)
+    pisa_status = pisa.CreatePDF(html, dest=response)
     if pisa_status.err:
        return HttpResponse('We had some errors <pre>' + html + '</pre>')
     return response       

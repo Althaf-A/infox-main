@@ -20,16 +20,17 @@
                             </thead>
                             <tbody>
                             <br>
+                            {% for i in mem %}
                                 <tr>
                                     
-                                    {% for i in mem %}
+                                    
                                     <td> {{i.month_fromdate}}</td>
                                     <td>  {{i.month_todate}}</td>
                                     <td> {{i.month_workingdays}}</td>
                                     <td>  {{i.month_holidays}}</td>
-                                    {% endfor %}
+                                    
                                 </tr>
-                                
+                            {% endfor %}
                                 
     
                                 
